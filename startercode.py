@@ -9,6 +9,7 @@
 # Asked Claude to check my econding value for opening the file.
 # Asked Claude for hints to find the correct status code.
 # Asked Claude to explain the difference between .json() and json.load()
+# Asked Claude for hints regarding the conditionals in get_longest_lifespan_breed
 # Did your use of GenAI on this assignment align with your goals and guidelines in your Gen AI contract? If not, why?
 #
 # --- ARGUMENTS & EXPECTED RETURN VALUES PROVIDED --- #
@@ -127,7 +128,24 @@ def get_longest_lifespan_breed(cache_file):
         A tuple (breed_name, max_lifespan_integer) for the winning breed, OR the
         string "No breeds found" if no breed in the cache has a life.max value.
     """
-    pass
+    cache = load_json(cache_file)
+    best_name = None
+    best_max = None
+    for url in cache:
+        entry = cache[url]
+        try:
+            life_max = entry["data"]["attributes"]["life"]["max"]
+            if not isinstance(life_max, int):
+                continue
+            name = entry["data"]["attributes"]["name"]
+        except (KeyError, TypeError):
+            continue
+        if best_max is None or life_max > best_max or (life_max == best_max and name < best_name):
+            best_name = name
+            best_max = life_max
+    if best_name is None:
+        return "No breeds found"
+    return (best_name, best_max)
 
 
 def get_groups_above_cutoff(cutoff, cache_file):
