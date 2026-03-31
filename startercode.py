@@ -10,6 +10,7 @@
 # Asked Claude for hints to find the correct status code.
 # Asked Claude to explain the difference between .json() and json.load()
 # Asked Claude for hints regarding the conditionals in get_longest_lifespan_breed
+# Used Claude to help visualize the json structure to find the nested values
 # Did your use of GenAI on this assignment align with your goals and guidelines in your Gen AI contract? If not, why?
 #
 # --- ARGUMENTS & EXPECTED RETURN VALUES PROVIDED --- #
@@ -164,8 +165,25 @@ def get_groups_above_cutoff(cutoff, cache_file):
     RETURNS:
         A dictionary {group_uuid: count} for groups with count >= cutoff only.
     """
-    pass
-
+    cache = load_json(cache_file)
+    group_counts = {}
+    for url in cache:
+        entry = cache[url]
+        try:
+            group_id = entry["data"]["relationships"]["group"]["data"]["id"]
+            if not group_id:
+                continue
+        except (KeyError, TypeError):
+            continue
+        if group_id in group_counts:
+            group_counts[group_id] += 1
+        else:
+            group_counts[group_id] = 1
+    result = {}
+    for group_id in group_counts:
+        if group_counts[group_id] >= cutoff:
+            result[group_id] = group_counts[group_id]
+    return result
 
 # Extra Credit
 def recommend_breeds_in_same_group(breed_name, cache_file):
