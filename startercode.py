@@ -7,6 +7,8 @@
 # e.g.:
 # Asked ChatGPT for help debugging and understanding the JSON structure
 # Asked Claude to check my econding value for opening the file.
+# Asked Claude for hints to find the correct status code.
+# Asked Claude to explain the difference between .json() and json.load()
 # Did your use of GenAI on this assignment align with your goals and guidelines in your Gen AI contract? If not, why?
 #
 # --- ARGUMENTS & EXPECTED RETURN VALUES PROVIDED --- #
@@ -74,7 +76,13 @@ def search_breed(breed_id):
         JSON body as a dict (with a top-level 'data' key on success), OR None if the
         request failed or the response does not represent a successful breed lookup.
     """
-    pass
+    url = f"https://dogapi.dog/api/v2/breeds/{breed_id}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        parsed_json = response.json()
+        if parsed_json.get("data") is not None:
+            return (parsed_json, url)
+    return None
 
 
 def update_cache(breed_ids, cache_file):
