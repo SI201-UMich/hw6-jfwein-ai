@@ -262,9 +262,9 @@ class TestHomeworkDogAPI(unittest.TestCase):
         # NOTE: By default we leave test files on disk so you can inspect the cache.
         # If you want the tests to clean up after themselves, UNCOMMENT the lines below.
         #
-        # if os.path.exists(self.test_cache_file):
-        #     os.remove(self.test_cache_file)
-        pass
+        if os.path.exists(self.test_cache_file):
+            os.remove(self.test_cache_file)
+        
 
     # -------------------------
     # load_json / create_cache
