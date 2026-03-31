@@ -11,6 +11,7 @@
 # Asked Claude to explain the difference between .json() and json.load()
 # Asked Claude for hints regarding the conditionals in get_longest_lifespan_breed
 # Used Claude to help visualize the json structure to find the nested values
+# Asked Claude for hints to make sure all functions worked with all different test cases.
 # Did your use of GenAI on this assignment align with your goals and guidelines in your Gen AI contract? If not, why?
 #
 # --- ARGUMENTS & EXPECTED RETURN VALUES PROVIDED --- #
