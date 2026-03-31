@@ -206,7 +206,41 @@ def recommend_breeds_in_same_group(breed_name, cache_file):
             "No group information available for '{breed_name}'."  (no group id)
             "No recommendations found based on '{breed_name}'."  (no other breeds in that group)
     """
-
+    cache = load_json(cache_file)
+    if len(cache) == 0:
+        return "No breed data found in cache."
+    
+    target_entry = None
+    for url in cache:
+        entry = cache[url]
+        try:
+            name = entry["data"]["attributes"]["name"]
+        except (KeyError, TypeError):
+            continue
+        if name.lower() == breed_name.lower():
+            target_entry = entry
+            break
+    if target_entry is None:
+        return f"'{breed_name}' is not in the cache."
+    try:
+        target_group_id = target_entry["data"]["relationships"]["group"]["data"]["id"]
+    except (KeyError, TypeError):
+        return f"No group information available for '{breed_name}'."
+    
+    recommendations = []
+    for url in cache:
+        entry = cache[url]
+        try:
+            name = entry["data"]["attributes"]["name"]
+            group_id = entry["data"]["relationships"]["group"]["data"]["id"]
+        except (KeyError, TypeError):
+            continue
+        if group_id == target_group_id and name.lower() != breed_name.lower():
+            recommendations.append(name)
+    if len(recommendations) == 0:
+        return f"No recommendations found based on '{breed_name}'."
+    recommendations.sort()
+    return recommendations
 
 class TestHomeworkDogAPI(unittest.TestCase):
     def setUp(self):
@@ -430,7 +464,6 @@ class TestHomeworkDogAPI(unittest.TestCase):
     # -------------------------
     # extra credit - uncomment tests below to evaluate extra credit function
     # -------------------------
-    """
     def test_recommend_breeds_in_same_group_empty_cache(self):
         create_cache({}, self.test_cache_file)
         self.assertEqual(
@@ -535,7 +568,6 @@ class TestHomeworkDogAPI(unittest.TestCase):
             recommend_breeds_in_same_group("breed a", self.test_cache_file),
             ["Breed B", "Breed Z"],
         )
-    """
 
 
 if __name__ == "__main__":
